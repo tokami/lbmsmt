@@ -1,0 +1,16 @@
+Package: lbmsmt
+Type: Package
+Title: Length-based methods for FAO's stock monitoring tool
+Version: 0.1
+Date: 2022-10-30
+Authors@R: c(person(given="Tobias",
+                    family="Mildenberger",
+                    email="tobm@aqua.dtu.dk",
+                    role=c("aut","cre","cph"),
+                    comment=c(ORCID="0000-0002-6631-7524")))
+Author: Tobias Mildenberger [aut, cre, ctb]
+Maintainer: Tobias Mildenberger <t.k.mildenberger@gmail.com>
+Description: Collects algorithms for length-based methods (lbm) for FAO's stock monitoring tool (smt).
+Depends: R (>= 3.1.0)
+Encoding: UTF-8
+RoxygenNote: 7.1.1
