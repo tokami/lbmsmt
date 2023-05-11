@@ -12,5 +12,8 @@ Author: Tobias Mildenberger [aut, cre, ctb]
 Maintainer: Tobias Mildenberger <t.k.mildenberger@gmail.com>
 Description: Collects algorithms for length-based methods (lbm) for FAO's stock monitoring tool (smt).
 Depends: R (>= 3.1.0)
+Imports:
+    TropFishR,
+    LBSPR
 Encoding: UTF-8
 RoxygenNote: 7.1.1

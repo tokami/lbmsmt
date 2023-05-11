@@ -44,9 +44,9 @@ run_lbspr <- function(data, bin.size, linf, lm50, lm95, mk, lwa, lwb, lunit){
 
         ## More checks
         ## LBSPR returns error if Linf is larger than max length class
-        if(linf > max(midL + bin.size/2, na.rm = TRUE)){
-            stop("Linf cannot be smaller than max length class in data!")
-        }
+        ## if(linf > max(midL + bin.size/2, na.rm = TRUE)){
+        ##     stop("Linf cannot be smaller than max length class in data!")
+        ## }
         if(lm50 > lm95){
             stop("Lm50 is larger than Lm95! That is not possible")
         }
@@ -71,7 +71,12 @@ run_lbspr <- function(data, bin.size, linf, lm50, lm95, mk, lwa, lwb, lunit){
         ## Use Walpha_units?
 
         ## Create LB lengths object
-        dataYearly <- TropFishR::lfqModify(data, aggregate = "year")
+        ## dataYearly <- TropFishR::lfqModify(data, aggregate = "year")
+        ## HERE: TropFishR not online?
+        dataYearly <- data
+        colnames(dataYearly$catch) = paste0("X",format(dataYearly$dates, "%Y"))
+        print(dataYearly)
+        ##
         dat <- cbind(dataYearly$midLengths,
                      dataYearly$catch)
         if(length(dataYearly$dates) == 1){
@@ -84,14 +89,41 @@ run_lbspr <- function(data, bin.size, linf, lm50, lm95, mk, lwa, lwb, lunit){
             }
         }
         colnames(dat) <- c("length", years)
+        print(dat)
+
+        ## Necessary, because all(diff(LMids) == median(diff(LMids))) in LB_lengths initalisation can cause issue with decimal digits
+        dat[,1] <- 1:nrow(dat) ## Later overwritten with original bins
+
+        ## HERE: suppressWarnings leads to error on WPS anyways... hacking needed
         suppressWarnings({lblengths <- new("LB_lengths",
-                                           file = dat,
+##                                           file = dat,
                                            LB_pars = lbpars,
                                            dataType = "freq")})
+        lblengths@LMids <- dat[,1]
+        lblengths@LData <- dat[,-1]
+        lblengths@L_units <- lunit
+        lblengths@Years <- as.character(years)
+        lblengths@NYears <- length(years)
         lblengths@Years <- as.numeric(lblengths@Years)
+        lblengths@LMids <- dataYearly$midLengths  ## overwrite dummy midlengths
+
+        if(lbpars@Linf > max(dataYearly$midLengths)){
+
+            lmids <- dataYearly$midLengths
+            lmids.add <- seq(max(lmids), 2 * lbpars@Linf, lbpars@BinWidth)[-1]
+            lmids.add <- lmids.add[1:which(lmids.add > lbpars@Linf)[1]]
+            lblengths@LMids <- c(lmids,lmids.add)
+
+            ldata <- lblengths@LData
+            ldata <- rbind(ldata,matrix(0, length(lmids.add), ncol(ldata)))
+            lblengths@LData <- ldata
+        }
+
+        print(lbpars)
+        print(lblengths)
 
         ## Fit LBSPR
-        modfit <- try(LBSPRfit(lbpars, lblengths, useCPP = TRUE))
+        modfit <- try(LBSPR::LBSPRfit(lbpars, lblengths, useCPP = TRUE))
 
         if(!inherits(modfit, "try-error")){
             res <- modfit
