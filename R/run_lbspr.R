@@ -74,6 +74,9 @@ run_lbspr <- function(data, bin.size, linf, lm50, lm95, mk, lwa, lwb, lunit){
         ## dataYearly <- TropFishR::lfqModify(data, aggregate = "year")
         ## HERE: TropFishR not online?
         dataYearly <- data
+        if(!inherits(dataYearly$catch,"matrix")){
+            dataYearly$catch = as.matrix(dataYearly$catch)
+        }
         colnames(dataYearly$catch) = paste0("X",format(dataYearly$dates, "%Y"))
         print(dataYearly)
         ##
@@ -99,8 +102,8 @@ run_lbspr <- function(data, bin.size, linf, lm50, lm95, mk, lwa, lwb, lunit){
 ##                                           file = dat,
                                            LB_pars = lbpars,
                                            dataType = "freq")})
-        lblengths@LMids <- dat[,1]
-        lblengths@LData <- dat[,-1]
+        lblengths@LMids <- as.matrix(dat[,1])
+        lblengths@LData <- as.matrix(dat[,-1])
         lblengths@L_units <- lunit
         lblengths@Years <- as.character(years)
         lblengths@NYears <- length(years)
