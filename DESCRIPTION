@@ -1,8 +1,8 @@
 Package: lbmsmt
 Type: Package
 Title: Length-based methods for FAO's stock monitoring tool
-Version: 0.1
-Date: 2022-10-30
+Version: 0.1.1
+Date: 2023-09-18
 Authors@R: c(person(given="Tobias",
                     family="Mildenberger",
                     email="tobm@aqua.dtu.dk",
